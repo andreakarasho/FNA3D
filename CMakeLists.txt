@@ -8,6 +8,9 @@ option(BUILD_SHARED_LIBS "Build shared library" ON)
 option(TRACING_SUPPORT "Build with tracing enabled" OFF)
 option(DISABLE_D3D11 "Disable D3D11 backend")
 
+# Build as shared or static
+set(FNA3D_STATIC "no" CACHE STRING "Build as a static library")
+
 # Version
 SET(LIB_MAJOR_VERSION "0")
 SET(LIB_MINOR_VERSION "21")
@@ -88,8 +91,10 @@ if(EMSCRIPTEN)
 	)
 endif()
 
+
+
 # Source lists
-add_library(FNA3D
+file(GLOB FNA3D_SOURCES
 	# Public Headers
 	include/FNA3D.h
 	include/FNA3D_Image.h
@@ -110,6 +115,15 @@ add_library(FNA3D
 	src/FNA3D_PipelineCache.c
 	src/FNA3D_Tracing.c
 )
+
+
+if (FNA3D_STATIC)
+	add_library(FNA3D STATIC ${FNA3D_SOURCES})
+else (FNA3D_STATIC)
+	add_library(FNA3D SHARED ${FNA3D_SOURCES})
+endif (FNA3D_STATIC)
+
+
 add_library(mojoshader STATIC
 	MojoShader/mojoshader.c
 	MojoShader/mojoshader_effects.c
